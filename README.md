@@ -1,4 +1,4 @@
-# MS DEMO
+# CSV Query
 
 
 
@@ -19,7 +19,9 @@ $ npm run start
 ## How to call API
 
 URL: https://localhost:5001/
+
 METHOD: GET
+
 BODY: JSON, add query string and target file path, example:
 
 ```
