@@ -35,14 +35,17 @@ BODY: JSON, add query string and target file path, example:
 
 ## Code Structure
 - index.ts
+
 *Entry point.*
 
 
 - Parser.ts
+
 *Parse query string and every condition in it. Return query results.*
 
 
 - Qurey.ts
+
 *Query the target file and save query results into output.csv file.*
 
 
