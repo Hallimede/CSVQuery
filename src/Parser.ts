@@ -8,10 +8,6 @@ class Parser {
         const conditions = query.split(/and|or/).filter(str => str.trim() !== '');
         const operators = query.match(/and|or/g);
 
-        console.log(conditions);
-        console.log(operators);
-
-
         if (!operators && conditions.length > 1 || operators && (operators.length !== conditions.length - 1)) {
             throw Error('Predicates and Conditions mismatch');
         }
@@ -23,8 +19,6 @@ class Parser {
         }
 
         let results: CsvRow[] = allResults[0];
-
-        console.log(allResults)
 
         if (operators) {
             for (let i = 0; i < operators.length; i++) {
