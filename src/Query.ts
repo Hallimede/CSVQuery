@@ -16,27 +16,36 @@ class Query {
             '==': (row) => row[left] === right,
             '!=': (row) => row[left] !== right,
             '$=': (row) => row[left].toLowerCase() === right.toLowerCase(),
-            '&=': (row) => row[left].includes(right)
-        }
+            '&=': (row) => { console.log('&&&', row, row[left], left); return row[left].includes(right) }
+        };
 
         const operationStar: StringToFuncMap = {
             '==': (row) => Object.values(row).includes(right),
             '!=': (row) => !Object.values(row).includes(right),
             '$=': (row) => Object.values(row).some(value => value.toLowerCase() === right.toLowerCase()),
             '&=': (row) => Object.values(row).some(value => value.includes(right))
-        }
+        };
 
         const rows: CsvRow[] = [];
-        const stream = fs.createReadStream(filePath).pipe(csv());
 
-        for await (const row of stream) {
-            rows.push(row);
+        try {
+            const stream = fs.createReadStream(filePath).pipe(csv());
+            for await (const row of stream) {
+                rows.push(row);
+            }
+        } catch (e: any) {
+            throw new Error('Reading csv file error' + e.message);
         }
 
-        const filteredRows = rows.filter(left === '*' ? operationStar[op] : operation[op]);
+        let filteredRows;
+
+        try {
+            filteredRows = rows.filter(left === '*' ? operationStar[op] : operation[op]);
+        } catch (e: any) {
+            throw new Error('Querying csv file error' + e.message);
+        }
 
         return filteredRows;
-
     }
 
     saveCSV = (rows: CsvRow[], filePath: string) => {
@@ -47,8 +56,8 @@ class Query {
         });
 
         csvWriter.writeRecords(rows)
-            .then(() => console.log('The CSV file was written successfully.'))
-            .catch((error) => console.error(error));
+            // .then(() => console.log('The CSV file was written successfully.'))
+            .catch((error) => { throw new Error('Writing csv file error' + error.message) });
     }
 
 }

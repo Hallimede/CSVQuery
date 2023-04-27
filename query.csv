@@ -1,4 +1,6 @@
 C1,C2,C3
 A,B,Value 1
+A,C,Value 2
+B,C,Value 3
 Sample Test 1,Another "Sample",Value 1
-Sample Test 2,Another "Sample" 2,Value 2
+Sample Test 2,Another "Sample 2",Value 2
