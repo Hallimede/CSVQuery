@@ -1,5 +1,5 @@
 import express, { Express, Request, Response } from 'express';
-import Parser from './Parser';
+import Parser from './src/Parser';
 import bodyParser from 'body-parser';
 
 const app: Express = express();
@@ -10,6 +10,8 @@ const port = 5001;
 app.get('/', async (req: Request, res: Response) => {
     try {
         const { query, filePath } = req.body;
+        if (!query) throw new Error("Missing query");
+        if (!filePath) throw new Error("Missing file path");
         const results = await Parser.parseQuery(query, filePath);
         console.log(results)
         res.send(results);
