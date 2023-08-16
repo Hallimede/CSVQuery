@@ -11,11 +11,11 @@ app.get('/', async (req: Request, res: Response) => {
     try {
         const { query, filePath } = req.body;
         const results = await Parser.parseQuery(query, filePath);
-        console.log(results)
+        console.log(results);
         res.send(results);
     } catch (error: any) {
         console.log(error.message);
-        res.status(400).send({ message: error.message });
+        res.status(400).send({ message: error.message });  
     }
 });
 
