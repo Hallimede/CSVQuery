@@ -11,13 +11,13 @@ export const arrayOr = (rowsA: CsvRow[], rowsB: CsvRow[]) => {
     return rowsA.concat(tmp)
 }
 
-export const rowEquals = (rowA: CsvRow, rowsB: CsvRow) => {
-    if (rowA === rowsB) {
+export const rowEquals = (rowA: CsvRow, rowB: CsvRow) => {
+    if (rowA === rowB) {
         return true;
     } 
 
     const keys1 = Object.keys(rowA);
-    const keys2 = Object.keys(rowsB);
+    const keys2 = Object.keys(rowB);
 
     if (keys1.length !== keys2.length) {
         return false;
@@ -25,7 +25,7 @@ export const rowEquals = (rowA: CsvRow, rowsB: CsvRow) => {
 
     for (let i = 0; i < keys1.length; i++) {
         const key = keys1[i];
-        if (!rowsB.hasOwnProperty(key) || !(rowA[key] === rowsB[key])) {
+        if (!rowB.hasOwnProperty(key) || !(rowA[key] === rowB[key])) {
             return false;
         }
     }

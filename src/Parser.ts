@@ -4,29 +4,36 @@ import Query from "./Query";
 class Parser {
 
     parseQuery = async (query: string, filePath: string) => {
-        const tokens = query.split(/\s+(or|and)\s+/);
-        if (tokens.length % 2 === 0) {
+
+        const conditions = query.split(/and|or/).filter(str => str.trim() !== '');
+        const operators = query.match(/and|or/g);
+
+        if (!operators && conditions.length > 1 || operators && (operators.length !== conditions.length - 1)) {
             throw Error('Predicates and Conditions mismatch');
         }
 
-        let results: CsvRow[] = [];
+        let allResults: CsvRow[][] = [];
 
-        for (let i = 0; i < tokens.length; i++) {
-            if (i % 2 === 0) {                   // If Condition, not 'and' nor 'or'
-                const subResults = await this.parseCondition(tokens[i], filePath);
-                if (i == 0)                      // For the 1st condition
-                    results = subResults
-                else
-                    results = tokens[i - 1] === 'and' ? rowArrayAnd(results, subResults) :
-                        rowArrayOr(results, subResults)
+        for (const condition of conditions) {
+            allResults.push(await this.parseCondition(condition, filePath));
+        }
+
+        let results: CsvRow[] = allResults[0];
+
+        if (operators) {
+            for (let i = 0; i < operators.length; i++) {
+                results = operators[i] === 'and' ?
+                    rowArrayAnd(results, allResults[i + 1]) : rowArrayOr(results, allResults[i + 1]);
             }
         }
 
-        if (results.length !== 0) {
-            Query.saveCSV(results, 'output.csv')
+        if (results.length === 0) {
+            throw Error('No results found');
         }
 
-        return results
+        Query.saveCSV(results, 'output.csv');
+
+        return results;
     }
 
     parseCondition = async (condition: string, filePath: string) => {
@@ -34,7 +41,8 @@ class Parser {
         const matchCondition = /^\s*(.+)\s*(==|!=|&=|\$=)\s*(.+)\s*$/;
 
         const matchC = matchCondition.exec(condition)
-        if (!matchC) { 
+
+        if (!matchC) {
             throw Error(`Invalid Condition at ${condition}`);
         }
 
@@ -43,7 +51,7 @@ class Parser {
         const matchQuotes = /^\s*"(.*)"\s*$/;
         const matchQ = right.match(matchQuotes);
         if (!matchQ) {
-            throw Error(`Quotes doesn't match at ${condition}`);
+            throw Error(`Quotes don't match at ${condition}`);
         }
 
         const rightNew = matchQ[1]

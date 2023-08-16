@@ -1,4 +1,4 @@
 dist/
 node_modules/
 output.csv
-coverage
+coverage/
